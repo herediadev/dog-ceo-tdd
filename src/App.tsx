@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import {listAllBreedService} from "./services/ListAllBreedService";
 import {breedMapperService} from "./services/BreedMapperService";
 
 function App() {
-    const [breedList, setBreedList]: Array<any> = useState<Array<any>>([]);
+    const [breedList, setBreedList]: Array<any> = React.useState<Array<any>>([]);
 
     useEffect(() => {
         listAllBreedService()

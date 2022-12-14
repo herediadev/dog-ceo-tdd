@@ -1,9 +1,11 @@
 import React from 'react';
 import {act, render, screen} from '@testing-library/react';
-import App from './App';
-import {listAllBreedService} from "./services/ListAllBreedService";
-
 import {setImmediate} from "timers";
+
+import App from './App';
+
+import {listAllBreedService} from "./services/ListAllBreedService";
+import * as breedMapperServiceModule from "./services/BreedMapperService";
 
 jest.mock("./services/ListAllBreedService");
 
@@ -23,10 +25,15 @@ const data = {
 };
 
 describe('Given the App component', () => {
+    beforeEach(() => {
+        jest.resetAllMocks();
+        jest.restoreAllMocks();
+    });
 
     test('renders learn react link', () => {
         //arrange
-        listAllBreedServiceMock.mockImplementation(() => new Promise(resolve => {}));
+        listAllBreedServiceMock.mockImplementation(() => new Promise(resolve => {
+        }));
         render(<App/>);
 
         //act
@@ -38,7 +45,8 @@ describe('Given the App component', () => {
 
     test("it will find the select component for the breed list", () => {
         //Arrange
-        listAllBreedServiceMock.mockImplementation(() => new Promise(resolve => {}));
+        listAllBreedServiceMock.mockImplementation(() => new Promise(resolve => {
+        }));
         render(<App/>);
 
         //Act
@@ -50,6 +58,8 @@ describe('Given the App component', () => {
 
     test('it will render the option breed for the breed selector', async () => {
         //arrange
+        jest.spyOn(React, "useState");
+        jest.spyOn(breedMapperServiceModule, "breedMapperService");
         listAllBreedServiceMock.mockImplementation(() => Promise.resolve({
             data: data,
             headers: {},
@@ -67,17 +77,19 @@ describe('Given the App component', () => {
         const breedsOptions: Array<any> = screen.queryAllByTestId("breedsOptions");
 
         //assert
-        //TODO: agregar spyOn useState react
-        expect(React.useState).toHaveBeenCalledTimes(2);
         expect(listAllBreedServiceMock).toHaveBeenCalledTimes(1);
+        expect(breedMapperServiceModule.breedMapperService).toHaveBeenCalledTimes(1);
+        expect(breedMapperServiceModule.breedMapperService).toHaveBeenCalledWith(data);
+        expect(React.useState).toHaveBeenCalledTimes(2);
         expect(breedsOptions[0].value).toBe("affenpinscher");
         expect(breedsOptions[1].value).toBe("bulldog");
         expect(breedsOptions[2].value).toBe("bullterrier");
     });
 
-    test('it will not render the option breed for the breed selector when the breed list is empty', async() => {
+    test('it will not render the option breed for the breed selector when the breed list is empty', async () => {
         //arrange
-        listAllBreedServiceMock.mockImplementation(() => new Promise(resolve => {}));
+        listAllBreedServiceMock.mockImplementation(() => new Promise(resolve => {
+        }));
         render(<App/>);
 
         //act

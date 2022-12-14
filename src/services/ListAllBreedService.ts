@@ -9,4 +9,4 @@ const listAllBreedService = async () => {
 
 export {
     listAllBreedService,
-}
+};
