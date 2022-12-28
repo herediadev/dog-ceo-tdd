@@ -2,13 +2,16 @@ import React, {useEffect} from 'react';
 import './App.css';
 import {listAllBreedService} from "./services/ListAllBreedService";
 import {breedMapperService} from "./services/BreedMapperService";
+import {BreedSelector} from "./components/BreedSelector";
 
-function App() {
+const App = () => {
     const [breedList, setBreedList]: Array<any> = React.useState<Array<any>>([]);
+    const [loading, setLoading] = React.useState<boolean>(true);
 
     useEffect(() => {
         listAllBreedService()
             .then((response: any) => {
+                setLoading(false);
                 const breedMapped = breedMapperService(response.data);
                 setBreedList(breedMapped);
             });
@@ -17,15 +20,9 @@ function App() {
     return (
         <div className="App">
             <h3>Dog app</h3>
-            <select name="breedSelector" id="breedSelector" data-testid={"breedSelector"}>
-                {breedList.map((breed: any) => (
-                    <option key={breed.name} data-testid={"breedsOptions"} value={breed.name}>
-                        {breed.name}
-                    </option>
-                ))}
-            </select>
+            <BreedSelector breedList={breedList} loading={loading}/>
         </div>
     );
-}
+};
 
 export default App;

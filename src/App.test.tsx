@@ -25,6 +25,7 @@ const data = {
 };
 
 describe('Given the App component', () => {
+
     beforeEach(() => {
         jest.resetAllMocks();
         jest.restoreAllMocks();
@@ -43,13 +44,22 @@ describe('Given the App component', () => {
         expect(linkElement).toBeInTheDocument();
     });
 
-    test("it will find the select component for the breed list", () => {
+    test("it will find the select component for the breed list", async () => {
         //Arrange
-        listAllBreedServiceMock.mockImplementation(() => new Promise(resolve => {
+        listAllBreedServiceMock.mockImplementation(() => Promise.resolve({
+            data: data,
+            headers: {},
+            config: {},
+            request: {},
+            status: 200,
+            statusText: "OK",
         }));
         render(<App/>);
 
         //Act
+        await act(async () => {
+            await new Promise(resolve => setImmediate(resolve));
+        });
         const breedSelector = screen.queryByTestId("breedSelector");
 
         //Assertion
@@ -80,24 +90,26 @@ describe('Given the App component', () => {
         expect(listAllBreedServiceMock).toHaveBeenCalledTimes(1);
         expect(breedMapperServiceModule.breedMapperService).toHaveBeenCalledTimes(1);
         expect(breedMapperServiceModule.breedMapperService).toHaveBeenCalledWith(data);
-        expect(React.useState).toHaveBeenCalledTimes(2);
+        expect(React.useState).toHaveBeenCalledTimes(4);
         expect(breedsOptions[0].value).toBe("affenpinscher");
         expect(breedsOptions[1].value).toBe("bulldog");
         expect(breedsOptions[2].value).toBe("bullterrier");
     });
 
-    test('it will not render the option breed for the breed selector when the breed list is empty', async () => {
+    test('it will show a loading component when the service is been called', () => {
         //arrange
         listAllBreedServiceMock.mockImplementation(() => new Promise(resolve => {
         }));
         render(<App/>);
 
         //act
+        const loadingComponent = screen.queryByTestId("loadingComponent");
         const breedSelector = screen.queryByTestId("breedSelector");
-        const breedsOptions: Array<any> = screen.queryAllByTestId("breedsOptions");
 
         //assert
-        expect(breedSelector).toBeInTheDocument();
-        expect(breedsOptions.length).toBe(0);
+        expect(loadingComponent).toBeInTheDocument();
+        expect(breedSelector).not.toBeInTheDocument();
     });
+
+
 });

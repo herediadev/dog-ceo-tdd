@@ -1,4 +1,5 @@
 import {breedMapperService} from "./BreedMapperService";
+import {BreedModel} from "../models/BreedModel";
 
 describe('"Given the BreedMapperService', () => {
 
@@ -18,7 +19,7 @@ describe('"Given the BreedMapperService', () => {
             },
             "status": "success",
         };
-        const expected = [
+        const expected: Array<BreedModel> = [
             {
                 name: "affenpinscher",
                 subBreed: []
@@ -40,7 +41,7 @@ describe('"Given the BreedMapperService', () => {
         ];
 
         //act
-        const result = breedMapperService(data);
+        const result: Array<BreedModel> = breedMapperService(data);
 
         //assert
         expect(result).toEqual(expected);
