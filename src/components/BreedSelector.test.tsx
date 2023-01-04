@@ -1,4 +1,4 @@
-import {render, screen} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {BreedSelector} from "./BreedSelector";
 import {BreedModel} from "../models/BreedModel";
 
@@ -6,7 +6,8 @@ describe('Given the BreedSelector component', () => {
 
     test('it will render the loading component when the loading is true', () => {
         //arrange
-        render(<BreedSelector breedList={[]} loading={true}/>);
+        const breedSelectHandler = jest.fn();
+        render(<BreedSelector breedList={[]} loading={true} breedSelectHandler={breedSelectHandler}/>);
 
         //act
         const loadingComponent = screen.queryByTestId("loadingComponent");
@@ -17,7 +18,8 @@ describe('Given the BreedSelector component', () => {
 
     test('it will render an error message component when the loading is false and the breed list is empty', () => {
         //arrange
-        render(<BreedSelector breedList={[]} loading={false}/>);
+        const breedSelectHandler = jest.fn();
+        render(<BreedSelector breedList={[]} loading={false} breedSelectHandler={breedSelectHandler}/>);
 
         //act
         const loadingComponent = screen.queryByTestId("loadingComponent");
@@ -30,7 +32,7 @@ describe('Given the BreedSelector component', () => {
 
     test('it will render the select breed and the option when the loading is false and the breed list is not empty', () => {
         //arrange
-
+        const breedSelectHandler = jest.fn();
         const breedList: Array<BreedModel> = [
             {
                 name: "affenpinscher",
@@ -52,7 +54,7 @@ describe('Given the BreedSelector component', () => {
             }
         ];
 
-        render(<BreedSelector breedList={breedList} loading={false}/>);
+        render(<BreedSelector breedList={breedList} loading={false} breedSelectHandler={breedSelectHandler}/>);
 
         //act
         const breedSelector = screen.queryByTestId("breedSelector");
@@ -65,5 +67,40 @@ describe('Given the BreedSelector component', () => {
         expect(breedOptions.length).toBeGreaterThan(0);
         expect(errorMessageComponent).not.toBeInTheDocument();
         expect(loadingComponent).not.toBeInTheDocument();
+    });
+
+    test('it will select the bulldog breed when the event is triggered', () => {
+        //arrange
+        const breedSelectHandler = jest.fn();
+        const breedList: Array<BreedModel> = [
+            {
+                name: "affenpinscher",
+                subBreed: []
+            },
+            {
+                name: "bulldog",
+                subBreed: [
+                    "boston",
+                    "english",
+                    "french"
+                ]
+            },
+            {
+                name: "bullterrier",
+                subBreed: [
+                    "staffordshire"
+                ],
+            }
+        ];
+
+        render(<BreedSelector breedList={breedList} loading={false} breedSelectHandler={breedSelectHandler}/>);
+
+        //act
+        const breedSelector: any = screen.queryByTestId("breedSelector");
+        fireEvent.change(breedSelector, {target: {value: "bulldog"}});
+
+        //assert
+        expect(breedSelector).toBeInTheDocument();
+        expect(breedSelectHandler).toHaveBeenCalledWith("bulldog");
     });
 });

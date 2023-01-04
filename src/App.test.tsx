@@ -6,6 +6,7 @@ import App from './App';
 
 import {listAllBreedService} from "./services/ListAllBreedService";
 import * as breedMapperServiceModule from "./services/BreedMapperService";
+import exp from "constants";
 
 jest.mock("./services/ListAllBreedService");
 
@@ -109,6 +110,33 @@ describe('Given the App component', () => {
         //assert
         expect(loadingComponent).toBeInTheDocument();
         expect(breedSelector).not.toBeInTheDocument();
+    });
+
+    test('it will show the sub breed component with 3 children when the selected breed is bulldog', async () => {
+        //arrange
+        listAllBreedServiceMock.mockImplementation(() => Promise.resolve({
+            data: data,
+            headers: {},
+            config: {},
+            request: {},
+            status: 200,
+            statusText: "OK",
+        }));
+        render(<App/>);
+
+        //act
+        await act(async () => {
+            await new Promise(resolve => setImmediate(resolve));
+        });
+        const subBreedSelector = screen.queryByTestId("subBreedSelector");
+        const subBreedOptions = screen.queryAllByTestId("subBreedOptions");
+
+        //assert
+        expect(subBreedSelector).toBeInTheDocument();
+        expect(subBreedOptions[0]).toBeInTheDocument();
+        expect(subBreedOptions[1]).toBeInTheDocument();
+        expect(subBreedOptions[2]).toBeInTheDocument();
+        expect(subBreedOptions.length).toBe(3);
     });
 
 
