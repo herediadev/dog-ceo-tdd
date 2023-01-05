@@ -1,14 +1,16 @@
-import React, {useEffect} from 'react';
+import React, {Dispatch, SetStateAction, useEffect} from 'react';
 import './App.css';
 import {listAllBreedService} from "./services/ListAllBreedService";
 import {breedMapperService} from "./services/BreedMapperService";
 import {BreedSelector} from "./components/BreedSelector";
+import {BreedModel} from "./models/BreedModel";
 
 
 const App = () => {
-    const [breedList, setBreedList]: Array<any> = React.useState<Array<any>>([]);
-    const [loading, setLoading] = React.useState<boolean>(true);
 
+    const [loading, setLoading] = React.useState<boolean>(true);
+    const [breedList, setBreedList]: [Array<BreedModel>, Dispatch<SetStateAction<Array<BreedModel>>>] = React.useState<Array<BreedModel>>([]);
+    const [selectedBreed, setSelectedBreed]: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
 
     useEffect(() => {
         listAllBreedService()
@@ -19,7 +21,14 @@ const App = () => {
             });
     }, []);
 
-    const breedSelectHandler = () => {
+    const breedSelectHandler = (breedName: string) => {
+        setSelectedBreed(breedName);
+    };
+
+    const getSubBreedFromSelectedBreed = () => {
+        return breedList
+            .filter((breed: BreedModel) => breed.name === selectedBreed)
+            .flatMap((breed: BreedModel) => breed.subBreed);
     };
 
     return (
@@ -27,9 +36,17 @@ const App = () => {
             <h3>Dog app</h3>
             <BreedSelector breedList={breedList} loading={loading} breedSelectHandler={breedSelectHandler}/>
 
-            <select name="subBreedSelector" id="subBreedSelector" data-testid={"subBreedSelector"}>
-                <option value="test">test</option>
+
+            <select name="subBreedSelector" data-testid={"subBreedSelector"}>
+                {
+                    getSubBreedFromSelectedBreed()
+                        .map((subBreed: string) => (
+                            <option key={subBreed} data-testid={"subBreedOption"} value={subBreed}>{subBreed}</option>)
+                        )
+                }
             </select>
+
+
         </div>
     );
 };
