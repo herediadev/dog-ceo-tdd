@@ -12,6 +12,10 @@ const App = () => {
     const [breedList, setBreedList]: [Array<BreedModel>, Dispatch<SetStateAction<Array<BreedModel>>>] = React.useState<Array<BreedModel>>([]);
     const [selectedBreed, setSelectedBreed]: [string, Dispatch<SetStateAction<string>>] = React.useState<string>("");
 
+    const subBreedFromSelectedBreed = breedList
+        .filter((breed: BreedModel) => breed.name === selectedBreed)
+        .flatMap((breed: BreedModel) => breed.subBreed);
+
     useEffect(() => {
         listAllBreedService()
             .then((response: any) => {
@@ -25,27 +29,26 @@ const App = () => {
         setSelectedBreed(breedName);
     };
 
-    const getSubBreedFromSelectedBreed = () => {
-        return breedList
-            .filter((breed: BreedModel) => breed.name === selectedBreed)
-            .flatMap((breed: BreedModel) => breed.subBreed);
-    };
+    function hasSubBreed() {
+        return subBreedFromSelectedBreed.length > 0;
+    }
 
     return (
         <div className="App">
             <h3>Dog app</h3>
             <BreedSelector breedList={breedList} loading={loading} breedSelectHandler={breedSelectHandler}/>
 
-
-            <select name="subBreedSelector" data-testid={"subBreedSelector"}>
-                {
-                    getSubBreedFromSelectedBreed()
-                        .map((subBreed: string) => (
-                            <option key={subBreed} data-testid={"subBreedOption"} value={subBreed}>{subBreed}</option>)
-                        )
-                }
-            </select>
-
+            {hasSubBreed() &&
+                <select name="subBreedSelector" data-testid={"subBreedSelector"}>
+                    {
+                        subBreedFromSelectedBreed
+                            .map((subBreed: string) => (
+                                <option key={subBreed} data-testid={"subBreedOption"}
+                                        value={subBreed}>{subBreed}</option>)
+                            )
+                    }
+                </select>
+            }
 
         </div>
     );

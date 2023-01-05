@@ -32,7 +32,7 @@ describe('Given the App component', () => {
         jest.restoreAllMocks();
     });
 
-    test('renders learn react link', () => {
+    test('it will render learn react link', () => {
         //arrange
         listAllBreedServiceMock.mockImplementation(() => new Promise(resolve => {
         }));
@@ -184,5 +184,32 @@ describe('Given the App component', () => {
 
     });
 
+    test('it will hide the sub breed component when the selected breed is affenpinscher', async () => {
+        //arrange
+        listAllBreedServiceMock.mockImplementation(() => Promise.resolve({
+            data: data,
+            headers: {},
+            config: {},
+            request: {},
+            status: 200,
+            statusText: "OK",
+        }));
+        render(<App/>);
 
+        //act
+        await act(async () => {
+            await new Promise(resolve => setImmediate(resolve));
+        });
+        const breedSelector: ReturnType<queries.QueryByBoundAttribute<HTMLSelectElement>> = screen.queryByTestId<HTMLSelectElement>("breedSelector");
+
+        await act(() => {
+            fireEvent.change(breedSelector!, {target: {value: "affenpinscher"}});
+        });
+
+        const subBreedSelector: ReturnType<queries.QueryByBoundAttribute<HTMLSelectElement>> = screen.queryByTestId<HTMLSelectElement>("subBreedSelector");
+
+        //assert
+        expect(breedSelector).toBeInTheDocument();
+        expect(subBreedSelector).not.toBeInTheDocument();
+    });
 });
