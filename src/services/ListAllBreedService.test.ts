@@ -29,7 +29,6 @@ describe('Given the ListAllBreedService', () => {
 
         //act
         const result = await listAllBreedService();
-        console.log(result);
 
         //assert
         expect(result).toBeDefined();

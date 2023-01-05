@@ -42,6 +42,9 @@
     ]
   },
   "jest": {
-    "transformIgnorePatterns": ["/node_modules/(?!axios)/"]
+    "transformIgnorePatterns": ["/node_modules/(?!axios)/"],
+    "coveragePathIgnorePatterns" : [
+      "<rootDir>/src/index.tsx"
+    ]
   }
 }

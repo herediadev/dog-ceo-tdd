@@ -4,6 +4,7 @@ import {listAllBreedService} from "./services/ListAllBreedService";
 import {breedMapperService} from "./services/BreedMapperService";
 import {BreedSelector} from "./components/BreedSelector";
 import {BreedModel} from "./models/BreedModel";
+import {SubBreedSelector} from "./components/SubBreedSelector";
 
 
 const App = () => {
@@ -29,27 +30,13 @@ const App = () => {
         setSelectedBreed(breedName);
     };
 
-    function hasSubBreed() {
-        return subBreedFromSelectedBreed.length > 0;
-    }
 
     return (
         <div className="App">
             <h3>Dog app</h3>
             <BreedSelector breedList={breedList} loading={loading} breedSelectHandler={breedSelectHandler}/>
 
-            {hasSubBreed() &&
-                <select name="subBreedSelector" data-testid={"subBreedSelector"}>
-                    {
-                        subBreedFromSelectedBreed
-                            .map((subBreed: string) => (
-                                <option key={subBreed} data-testid={"subBreedOption"}
-                                        value={subBreed}>{subBreed}</option>)
-                            )
-                    }
-                </select>
-            }
-
+            <SubBreedSelector subBreedList={subBreedFromSelectedBreed}/>
         </div>
     );
 };
